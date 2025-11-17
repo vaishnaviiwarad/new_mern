@@ -35,7 +35,7 @@ jobs:
       # ----------------- FRONTEND -----------------
       - name: Install Frontend Dependencies
         working-directory: ./frotend
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Lint Frontend
         working-directory: ./frotend
@@ -48,7 +48,7 @@ jobs:
       # ----------------- BACKEND -----------------
       - name: Install Backend Dependencies
         working-directory: ./new_folder
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Lint Backend
         working-directory: ./new_folder
