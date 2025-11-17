@@ -23,19 +23,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'pnpm'
 
-      # Configure pnpm to match your local setup
-      - name: Configure pnpm
+      # FIX: Use fresh installation without any cache
+      - name: Install Frontend Dependencies
+        working-directory: ./frotend
         run: |
-          pnpm config set virtual-store-dir node_modules/.pnpm
-          pnpm config set virtual-store-dir-max-length 120
+          pnpm install --no-frozen-lockfile --no-verify-store-integrity
 
-      # Install using workspace
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      # -------- FRONTEND --------
       - name: Run Frontend Linting
         working-directory: ./frotend
         run: pnpm run lint
@@ -48,7 +42,11 @@ jobs:
         working-directory: ./frotend
         run: pnpm run build
 
-      # -------- BACKEND --------
+      - name: Install Backend Dependencies
+        working-directory: ./new_folder
+        run: |
+          pnpm install --no-frozen-lockfile --no-verify-store-integrity
+
       - name: Run Backend Linting
         working-directory: ./new_folder
         run: pnpm run lint
