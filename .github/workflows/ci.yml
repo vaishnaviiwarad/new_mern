@@ -24,11 +24,20 @@ jobs:
         with:
           node-version: '18'
 
-      # FIX: Use fresh installation without any cache
+      # FIX: Completely clean everything before installation
+      - name: Clean pnpm cache and modules
+        run: |
+          pnpm store prune
+          rm -rf node_modules
+          rm -rf frotend/node_modules
+          rm -rf new_folder/node_modules
+          rm -rf **/.pnpm-store
+          rm -rf **/.pnpm-state
+
+      # FIX: Install without frozen-lockfile first time
       - name: Install Frontend Dependencies
         working-directory: ./frotend
-        run: |
-          pnpm install --no-frozen-lockfile --no-verify-store-integrity
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run Frontend Linting
         working-directory: ./frotend
@@ -44,8 +53,7 @@ jobs:
 
       - name: Install Backend Dependencies
         working-directory: ./new_folder
-        run: |
-          pnpm install --no-frozen-lockfile --no-verify-store-integrity
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run Backend Linting
         working-directory: ./new_folder
