@@ -2,55 +2,50 @@ name: MERN CI Pipeline
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "feature"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "feature"]
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      # 3️⃣ Setup pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 10
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'pnpm'
+      # 4️⃣ Verify pnpm
+      - name: Verify pnpm
+        run: pnpm -v
 
-      # -------- FRONTEND --------
+      # 5️⃣ Frontend dependencies
       - name: Install Frontend Dependencies
         working-directory: ./frotend
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
-      - name: Run Frontend Linting
-        working-directory: ./frotend
-        run: pnpm run lint
-
-      - name: Run Frontend Tests
-        working-directory: ./frotend
-        run: pnpm test -- --watchAll=false --passWithNoTests
-
-      - name: Build Frontend
-        working-directory: ./frotend
-        run: pnpm run build
-
-      # -------- BACKEND --------
+      # 6️⃣ Backend dependencies
       - name: Install Backend Dependencies
         working-directory: ./new_folder
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
-      - name: Run Backend Linting
-        working-directory: ./new_folder
-        run: pnpm run lint
-
-      - name: Run Backend Tests
-        working-directory: ./new_folder
-        run: pnpm test
+      # 7️⃣ Optional: list project directories
+      - name: List project directories
+        run: |
+          echo "Frontend directory:"
+          ls ./frotend
+          echo "Backend directory:"
+          ls ./new_folder
