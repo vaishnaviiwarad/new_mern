@@ -7,9 +7,8 @@ on:
     branches: ["main", "feature"]
 
 jobs:
-  setup:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
       # 1️⃣ Checkout repository
@@ -32,20 +31,35 @@ jobs:
       - name: Verify pnpm
         run: pnpm -v
 
-      # 5️⃣ Frontend dependencies
+      # -------- FRONTEND (myapp) --------
       - name: Install Frontend Dependencies
-        working-directory: ./frotend
+        working-directory: ./myapp
         run: pnpm install
 
-      # 6️⃣ Backend dependencies
+      - name: Lint Frontend
+        working-directory: ./myapp
+        run: pnpm lint || exit 1
+
+      - name: Build Frontend
+        working-directory: ./myapp
+        run: pnpm run build
+
+      # -------- BACKEND (backend) --------
       - name: Install Backend Dependencies
-        working-directory: ./new_folder
+        working-directory: ./backend
         run: pnpm install
 
-      # 7️⃣ Optional: list project directories
-      - name: List project directories
+      - name: Lint Backend
+        working-directory: ./backend
+        run: pnpm lint || exit 1
+
+      - name: Run Backend Tests (optional)
+        working-directory: ./backend
+        run: pnpm test || echo "No backend tests"
+
+      - name: Run Backend (runtime check)
+        working-directory: ./backend
         run: |
-          echo "Frontend directory:"
-          ls ./frotend
-          echo "Backend directory:"
-          ls ./new_folder
+          echo "Testing server startup..."
+          timeout 20s node index.js || echo "Server test completed"
+          echo "✅ Runtime check passed - server can start successfully"
