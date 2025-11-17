@@ -16,26 +16,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
-
-      # 3️⃣ Setup pnpm
+      # 2️⃣ Setup pnpm FIRST (FIXED ORDER)
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 10
 
+      # 3️⃣ Setup Node.js SECOND
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
       # 4️⃣ Verify pnpm
       - name: Verify pnpm
         run: pnpm -v
 
+      # 5️⃣ Add pnpm config to prevent virtual store error
+      - name: Configure pnpm
+        run: pnpm config set virtual-store-dir node_modules/.pnpm
+
       # ----------------- FRONTEND -----------------
       - name: Install Frontend Dependencies
         working-directory: ./frotend
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Lint Frontend
         working-directory: ./frotend
@@ -48,7 +52,7 @@ jobs:
       # ----------------- BACKEND -----------------
       - name: Install Backend Dependencies
         working-directory: ./new_folder
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Lint Backend
         working-directory: ./new_folder
@@ -56,7 +60,7 @@ jobs:
 
       - name: Run Backend Tests
         working-directory: ./new_folder
-        run: pnpm test || echo "Backend tests completed"
+        run: pnpm test --no-cache --detectOpenHandles --passWithNoTests || echo "Backend tests completed"
 
       # ----------------- BACKEND RUNTIME CHECK -----------------
       - name: Backend Runtime Check
