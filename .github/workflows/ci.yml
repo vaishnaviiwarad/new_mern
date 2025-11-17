@@ -33,24 +33,24 @@ jobs:
 
       # -------- FRONTEND (myapp) --------
       - name: Install Frontend Dependencies
-        working-directory: ./myapp
+        working-directory: ./frotend
         run: pnpm install
 
       - name: Lint Frontend
-        working-directory: ./myapp
+        working-directory: ./frotend
         run: pnpm lint || exit 1
 
       - name: Build Frontend
-        working-directory: ./myapp
+        working-directory: ./frotend
         run: pnpm run build
 
       # -------- BACKEND (backend) --------
       - name: Install Backend Dependencies
-        working-directory: ./backend
+        working-directory: ./new_folder
         run: pnpm install
 
       - name: Lint Backend
-        working-directory: ./backend
+        working-directory: ./new_folder
         run: pnpm lint || exit 1
 
       - name: Run Backend Tests (optional)
@@ -58,7 +58,7 @@ jobs:
         run: pnpm test || echo "No backend tests"
 
       - name: Run Backend (runtime check)
-        working-directory: ./backend
+        working-directory: ./new_folder
         run: |
           echo "Testing server startup..."
           timeout 20s node index.js || echo "Server test completed"
