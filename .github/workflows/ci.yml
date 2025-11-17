@@ -1,0 +1,43 @@
+name: MERN CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies (workspace)
+        run: pnpm install
+
+      # Lint backend
+      - name: Lint Backend (new_folder)
+        run: pnpm --filter new_folder lint
+
+      # Lint frontend
+      - name: Lint Frontend (frotend)
+        run: pnpm --filter frotend lint
+
+      # Test backend
+      - name: Test Backend
+        run: pnpm --filter new_folder test -- --runInBand
+
+      # Test frontend
+      - name: Test Frontend
+        run: pnpm --filter frotend test -- --watchAll=false
