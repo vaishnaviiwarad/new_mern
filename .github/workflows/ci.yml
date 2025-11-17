@@ -20,18 +20,18 @@ jobs:
           node-version: 22
           cache: "pnpm"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Enable pnpm
+        run: corepack enable
 
       - name: Install dependencies (workspace)
         run: pnpm install
 
       # Lint backend
-      - name: Lint Backend (new_folder)
+      - name: Lint Backend
         run: pnpm --filter new_folder lint
 
       # Lint frontend
-      - name: Lint Frontend (frotend)
+      - name: Lint Frontend
         run: pnpm --filter frotend lint
 
       # Test backend
