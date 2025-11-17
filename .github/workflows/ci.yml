@@ -1,46 +1,33 @@
-name: MERN CI
+name: MERN CI Pipeline
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: ["main"]
   pull_request:
-    branches: [ main, master ]
+    branches: ["main"]
 
 jobs:
-  backend-test:
+  build:
     runs-on: ubuntu-latest
-    
-    services:
-      mongodb:
-        image: mongo:6.0
-        ports:
-          - 27017:27017
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'pnpm'
-    
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-    
-    # Clean installation without cache
-    - name: Install backend dependencies
-      run: |
-        pnpm store path
-        pnpm install --no-frozen-lockfile
-      working-directory: ./backend
-    
-    - name: Run backend tests
-      run: pnpm test
-      working-directory: ./backend
-      env:
-        NODE_ENV: test
-        MONGODB_URI: mongodb://localhost:27017/testdb
-        JWT_SECRET: test-secret
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # -------- FRONTEND (frotend folder) --------
+      - name: Install Frontend Dependencies
+        working-directory: ./frotend
+        run: npm install
+
+      - name: Build Frontend
+        working-directory: ./frotend
+        run: npm run build
+
+      # -------- BACKEND (new_folder - assuming this is your backend) --------
+      - name: Install Backend Dependencies
+        working-directory: ./new_folder
+        run: npm install
+
+      - name: Run Backend Tests
+        working-directory: ./new_folder
+        run: npm test
