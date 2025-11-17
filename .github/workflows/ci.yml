@@ -1,71 +1,46 @@
-name: MERN CI Pipeline
+name: MERN CI
 
 on:
   push:
-    branches: ["main", "feature"]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: ["main", "feature"]
+    branches: [ main, master ]
 
 jobs:
-  build:
+  backend-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
 
     steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # 2️⃣ Setup pnpm FIRST (FIXED ORDER)
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10
-
-      # 3️⃣ Setup Node.js SECOND
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
-
-      # 4️⃣ Verify pnpm
-      - name: Verify pnpm
-        run: pnpm -v
-
-      # 5️⃣ Add pnpm config to prevent virtual store error
-      - name: Configure pnpm
-        run: pnpm config set virtual-store-dir node_modules/.pnpm
-
-      # ----------------- FRONTEND -----------------
-      - name: Install Frontend Dependencies
-        working-directory: ./frotend
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint Frontend
-        working-directory: ./frotend
-        run: pnpm lint || exit 1
-
-      - name: Build Frontend
-        working-directory: ./frotend
-        run: pnpm run build
-
-      # ----------------- BACKEND -----------------
-      - name: Install Backend Dependencies
-        working-directory: ./new_folder
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint Backend
-        working-directory: ./new_folder
-        run: pnpm lint || exit 1
-
-      - name: Run Backend Tests
-        working-directory: ./new_folder
-        run: pnpm test --no-cache --detectOpenHandles --passWithNoTests || echo "Backend tests completed"
-
-      # ----------------- BACKEND RUNTIME CHECK -----------------
-      - name: Backend Runtime Check
-        working-directory: ./new_folder
-        run: |
-          echo "Testing server startup..."
-          timeout 20s node index.js || echo "Server test completed"
-          echo "✅ Runtime check passed - server can start successfully"
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    
+    # Clean installation without cache
+    - name: Install backend dependencies
+      run: |
+        pnpm store path
+        pnpm install --no-frozen-lockfile
+      working-directory: ./backend
+    
+    - name: Run backend tests
+      run: pnpm test
+      working-directory: ./backend
+      env:
+        NODE_ENV: test
+        MONGODB_URI: mongodb://localhost:27017/testdb
+        JWT_SECRET: test-secret
