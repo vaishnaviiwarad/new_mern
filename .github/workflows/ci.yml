@@ -11,39 +11,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js
-      - name: Setup Node.js
+      # 2️⃣ Setup Node.js + Corepack (pnpm ready)
+      - name: Setup Node.js with pnpm
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "pnpm"
 
-      # 3️⃣ Enable Corepack and prepare pnpm
-      - name: Enable pnpm
+      - name: Ensure pnpm is available
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
+          pnpm --version
 
-      # 4️⃣ Install dependencies
-      - name: Install dependencies (workspace)
+      # 3️⃣ Install dependencies
+      - name: Install workspace dependencies
         run: pnpm install
 
-      # 5️⃣ Lint backend
+      # 4️⃣ Lint backend
       - name: Lint Backend
         run: pnpm --filter new_folder lint
 
-      # 6️⃣ Lint frontend
+      # 5️⃣ Lint frontend
       - name: Lint Frontend
         run: pnpm --filter frotend lint
 
-      # 7️⃣ Test backend
+      # 6️⃣ Test backend
       - name: Test Backend
         run: pnpm --filter new_folder test -- --runInBand
 
-      # 8️⃣ Test frontend
+      # 7️⃣ Test frontend
       - name: Test Frontend
         run: pnpm --filter frotend test -- --watchAll=false
