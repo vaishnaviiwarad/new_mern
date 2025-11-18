@@ -29,18 +29,18 @@ jobs:
 
       # ---------- FRONTEND ESLINT ----------
       - name: Install Frontend Dependencies
-        working-directory: ./myapp
+        working-directory: ./frotend
         run: pnpm install
 
       - name: Run Frontend ESLint
-        working-directory: ./myapp
+        working-directory: ./frotend
         run: pnpm lint
 
       # ---------- BACKEND ESLINT ----------
       - name: Install Backend Dependencies
-        working-directory: ./backend
+        working-directory: ./new_folder
         run: pnpm install
 
       - name: Run Backend ESLint
-        working-directory: ./backend
+        working-directory: ./new_folder
         run: pnpm lint
