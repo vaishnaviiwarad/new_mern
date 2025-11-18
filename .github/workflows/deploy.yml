@@ -33,12 +33,19 @@ jobs:
         working-directory: ./frotend
         run: pnpm run build
 
-      # 🔥 FIX gh-pages ERROR (Git identity unknown)
-      - name: Configure Git Identity for Deployment
+      # Git identity
+      - name: Configure Git Identity
         run: |
           git config --global user.name "vaishnavi"
           git config --global user.email "vaishnaviwarad21@gmail.com"
 
+      # 🔥 Fix gh-pages authentication using GitHub Token
+      - name: Set GitHub Token for gh-pages
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
       - name: Deploy to GitHub Pages
         working-directory: ./frotend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run deploy
