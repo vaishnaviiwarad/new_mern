@@ -7,48 +7,40 @@ on:
     branches: ["main", "feature"]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
-      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
 
-      # 3️⃣ Setup pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 10
 
-      # 4️⃣ Verify pnpm
       - name: Verify pnpm
         run: pnpm -v
 
-      # ----------------- FRONTEND -----------------
+      # ---------- FRONTEND ESLINT ----------
       - name: Install Frontend Dependencies
-        working-directory: ./frotend
+        working-directory: ./myapp
         run: pnpm install
 
-      - name: Build Frontend
-        working-directory: ./frotend
-        run: pnpm run build
+      - name: Run Frontend ESLint
+        working-directory: ./myapp
+        run: pnpm lint
 
-      # ----------------- BACKEND -----------------
+      # ---------- BACKEND ESLINT ----------
       - name: Install Backend Dependencies
-        working-directory: ./new_folder
+        working-directory: ./backend
         run: pnpm install
 
-      - name: Run Backend (runtime check)
-        working-directory: ./new_folder
-        run: |
-          echo "Testing backend startup..."
-          timeout 20s node index.js || echo "Server test completed"
-          echo "✅ Backend can start successfully"
+      - name: Run Backend ESLint
+        working-directory: ./backend
+        run: pnpm lint
