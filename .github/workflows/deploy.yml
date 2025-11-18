@@ -35,4 +35,4 @@ jobs:
 
       - name: Deploy to GitHub Pages
         working-directory: ./frotend
-        run: pnpm deploy
+        run: pnpm run deploy
