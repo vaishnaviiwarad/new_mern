@@ -1,0 +1,38 @@
+name: Frontend Deployment
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Install frontend dependencies
+        working-directory: ./frotend
+        run: pnpm install
+
+      - name: Build frontend
+        working-directory: ./frotend
+        run: pnpm build
+
+      - name: Deploy to GitHub Pages
+        working-directory: ./frotend
+        run: pnpm deploy
