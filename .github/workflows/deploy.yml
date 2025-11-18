@@ -37,7 +37,7 @@ jobs:
       - name: Configure Git Identity for Deployment
         run: |
           git config --global user.name "vaishnavi"
-                    git config --global user.email "vaishnaviwarad21@gmail.com"
+          git config --global user.email "vaishnaviwarad21@gmail.com"
 
       - name: Deploy to GitHub Pages
         working-directory: ./frotend
