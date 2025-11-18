@@ -31,7 +31,13 @@ jobs:
 
       - name: Build frontend
         working-directory: ./frotend
-        run: pnpm build
+        run: pnpm run build
+
+      # 🔥 FIX gh-pages ERROR (Git identity unknown)
+      - name: Configure Git Identity for Deployment
+        run: |
+          git config --global user.name "vaishnavi"
+                    git config --global user.email "vaishnaviwarad21@gmail.com"
 
       - name: Deploy to GitHub Pages
         working-directory: ./frotend
