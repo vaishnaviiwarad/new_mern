@@ -1,0 +1,46 @@
+name: MERN CI Pipeline
+
+on:
+  push:
+    branches: ["main", "feature"]
+  pull_request:
+    branches: ["main", "feature"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Verify pnpm
+        run: pnpm -v
+
+      # ---------- FRONTEND ESLINT ----------
+      - name: Install Frontend Dependencies
+        working-directory: ./frotend
+        run: pnpm install
+
+      - name: Run Frontend ESLint
+        working-directory: ./frotend
+        run: pnpm lint
+
+      # ---------- BACKEND ESLINT ----------
+      - name: Install Backend Dependencies
+        working-directory: ./new_folder
+        run: pnpm install
+
+      - name: Run Backend ESLint
+        working-directory: ./new_folder
+        run: pnpm lint
